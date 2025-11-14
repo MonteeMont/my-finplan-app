@@ -2,7 +2,7 @@
   "name": "Our Financial Plan Dashboard",
   "short_name": "FinPlan",
   "description": "Track your budget, clear your debts, and build your future.",
-  "start_url": "finance-tracker.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#1a202c",
   "theme_color": "#2d3748",
@@ -18,4 +18,5 @@
       "type": "image/svg+xml"
     }
   ]
+
 }
