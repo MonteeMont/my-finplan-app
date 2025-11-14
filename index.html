@@ -3,14 +3,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Financial Plan Dashboard</title>
+    <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
     
+    <!-- Favicon Links -->
     <link rel="icon" href="icon-192.svg" type="image/svg+xml" sizes="192x192">
     <link rel="icon" href="icon-512.svg" type="image/svg+xml" sizes="512x512">
     <link rel="apple-touch-icon" href="icon-192.svg">
     
+    <!-- Theme color for browser UI -->
     <meta name="theme-color" content="#2d3748">
-    <script src="http://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Simple transition for tab content */
         .tab-content {
@@ -77,6 +80,7 @@
 </head>
 <body class="bg-gray-900 text-gray-200 font-sans leading-normal tracking-normal">
 
+    <!-- Login Overlay -->
     <div id="login-overlay" class="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center p-4">
         <div class="w-full max-w-md bg-gray-800 p-8 rounded-2xl shadow-2xl">
             <h2 class="text-3xl font-bold text-white text-center mb-2">Welcome Back</h2>
@@ -98,8 +102,10 @@
         </div>
     </div>
 
+    <!-- Main App Content (Hidden by default) -->
     <div id="app-container" class="container mx-auto p-4 max-w-7xl hidden">
 
+        <!-- Header -->
         <header class="mb-6 flex justify-between items-center">
             <div>
                 <h1 class="text-4xl font-bold text-white">Our Financial Plan Dashboard</h1>
@@ -110,11 +116,13 @@
             </button>
         </header>
 
+        <!-- Data Persistence Note -->
         <div class="bg-green-900 border border-green-700 text-green-200 px-4 py-3 rounded-lg relative mb-6" role="alert">
             <strong class="font-bold">Live Mode:</strong>
             <span class="block sm:inline">Your data is now saved to a shared cloud database and will sync in real-time.</span>
         </div>
 
+        <!-- Navigation Tabs -->
         <nav class="mb-6">
             <div class="flex flex-wrap border-b border-gray-700">
                 <button class="tab-btn active bg-gray-800 text-white py-3 px-6 rounded-t-lg font-semibold" data-tab="dashboard">Dashboard</button>
@@ -125,10 +133,13 @@
             </div>
         </nav>
 
+        <!-- Tab Content -->
         <main>
+            <!-- Dashboard Tab -->
             <div id="dashboard" class="tab-content active">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Dashboard</h2>
                 
+                <!-- Quick Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Savings</h3>
@@ -152,6 +163,7 @@
                     </div>
                 </div>
 
+                <!-- This Month's Snapshot -->
                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <h3 class="text-2xl font-semibold mb-4 text-white">This Month's Snapshot (<span id="db-current-month"></span>)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -171,21 +183,27 @@
                 </div>
             </div>
 
+            <!-- Budget Tracker Tab -->
             <div id="budget" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Budget Tracker</h2>
                 
+                <!-- Month Selector -->
                 <div class="mb-6">
                     <label for="month-selector" class="block text-lg font-medium text-gray-300 mb-2">Select Month to View/Edit:</label>
                     <select id="month-selector" class="bg-gray-800 border border-gray-700 text-white text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/2 p-3">
-                        </select>
+                        <!-- Options will be populated by JS -->
+                    </select>
                 </div>
 
+                <!-- Budget Table -->
                 <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg">
                     <table id="budget-table-render" class="w-full budget-table">
-                        </table>
+                        <!-- Content will be rendered by JS -->
+                    </table>
                 </div>
             </div>
 
+            <!-- Savings & Funds Tab -->
             <div id="savings" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Savings & Funds Projection</h2>
                 <p class="text-gray-400 mb-6">This table projects the growth of your funds over time. It uses your "Actual" data where available and "Projected" data for the future.</p>
@@ -204,11 +222,13 @@
                             </tr>
                         </thead>
                         <tbody id="savings-table-body">
-                            </tbody>
+                            <!-- Content will be rendered by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Debt Plan Tab -->
             <div id="debts" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Debt Plan</h2>
                 <p class="text-gray-400 mb-6">This shows your debt clearance plan for March 1st, 2026.</p>
@@ -224,16 +244,19 @@
                             </tr>
                         </thead>
                         <tbody id="debt-table-body">
-                            </tbody>
+                            <!-- Content will be rendered by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Plan Overview Tab -->
             <div id="plan" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-6 text-white">Your Financial Plan: Phase by Phase</h2>
                 
                 <div class="space-y-8">
                     
+                    <!-- Phase 1 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 1: The "Pre-Phase"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(December 2025 – February 2026)</p>
@@ -265,6 +288,7 @@
                         <p class="text-gray-300">Your starting savings of £0.00 will grow to <strong>£406.16</strong> from saving your surplus.</p>
                     </div>
 
+                    <!-- Phase 2 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 2: The "Total Clearance"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(March 1st, 2026)</p>
@@ -289,6 +313,7 @@
                         <p class="text-gray-300">Your total available savings (<strong>£406.16</strong> from Phase 1 + <strong>£23,497.98</strong> house sale = <strong>£23,904.14</strong>) are used to pay the <strong>£12,192.94</strong> in debts. This leaves your new <strong>Emergency Fund at £11,711.20</strong>.</p>
                     </div>
 
+                    <!-- Phase 3 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 3: The "Immigration Fund"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(March 2026 – December 2026)</p>
@@ -312,6 +337,7 @@
                         <p class="text-gray-300">Your final <strong>Emergency Fund will be £5,328.74</strong>, which remains a strong safety net.</p>
                     </div>
 
+                    <!-- Phase 4 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 4: The "Home Purchase" Plan</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(From Early 2027)</p>
@@ -340,6 +366,7 @@
         </main>
     </div>
 
+    <!-- Firebase SDK Imports -->
     <script type="module">
         // Firebase Services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -351,7 +378,7 @@
             signOut, 
             setPersistence, 
             localPersistence 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        } from "https{pathname: "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js", protocol: "https:", origin: "https://www.gstatic.com", host: "www.gstatic.com"}";
         import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- !!! START OF CRITICAL UPDATE !!! ---
@@ -1029,7 +1056,7 @@
             monthSelector.addEventListener('change', handleMonthChange);
             loginForm.addEventListener('submit', handleLogin);
             logoutButton.addEventListener('click', handleLogout);
-            
+
             try {
                 // *** UPDATED: Using hardcoded config object from above ***
                 const app = initializeApp(firebaseConfig);
@@ -1091,5 +1118,140 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
-
 </html>
+```
+
+---
+
+### 2. `manifest.json` (The PWA Manifest)
+
+```json
+{
+  "name": "Our Financial Plan Dashboard",
+  "short_name": "FinPlan",
+  "description": "Track your budget, clear your debts, and build your future.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#1a202c",
+  "theme_color": "#2d3748",
+  "icons": [
+    {
+      "src": "icon-192.svg",
+      "sizes": "192x1T92",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icon-monochrome.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "monochrome"
+    }
+  ]
+}
+```
+
+---
+
+### 3. `service-worker.js` (The v7 Cache)
+
+```javascript
+const CACHE_NAME = 'finplan-cache-v7'; // <-- Incremented to v7
+const URLS_TO_CACHE = [
+  '/',
+  'index.html',
+  'manifest.json',
+  'icon-192.svg',
+  'icon-512.svg',
+  'icon-monochrome.svg', 
+  
+  // External resources to cache
+  'https://cdn.tailwindcss.com',
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
+];
+
+// Install event: Caches the app shell
+self.addEventListener('install', (event) => {
+  console.log('Service Worker: Installing new version (v7)...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Service Worker: Caching app shell');
+        return cache.addAll(URLS_TO_CACHE);
+      })
+      .then(() => {
+        self.skipWaiting(); // Activate the new service worker immediately
+      })
+      .catch(error => {
+        console.error('Service Worker: Cache addAll failed:', error);
+      })
+  );
+});
+
+// Activate event: Cleans up old caches
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker: Activating new version (v7)...');
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Deleting old cache', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      return self.clients.claim(); // Take control of all open clients
+    })
+  );
+});
+
+// Fetch event: Serves cached content
+self.addEventListener('fetch', (event) => {
+  // We only want to cache GET requests.
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  // Network-first strategy for external resources
+  if (event.request.url.includes('firebase') || event.request.url.includes('google')) {
+    event.respondWith(
+      fetch(event.request)
+        .catch(() => {
+          return caches.match(event.request);
+        })
+    );
+    return;
+  }
+  
+  // Cache-first strategy for our app shell
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        
+        return fetch(event.request)
+          .then((networkResponse) => {
+            return caches.open(CACHE_NAME)
+              .then((cache) => {
+                if (networkResponse.status === 200) {
+                    cache.put(event.request, networkResponse.clone());
+                }
+                return networkResponse;
+              });
+          });
+      })
+      .catch((error) => {
+        console.error('Service Worker: Fetch error', error);
+      })
+  );
+});
