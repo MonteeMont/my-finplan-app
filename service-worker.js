@@ -9,9 +9,9 @@ const URLS_TO_CACHE = [
   
   // External resources to cache
   'https://cdn.tailwindcss.com',
-  'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
-  'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
+  'http://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
+  'http://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
+  'http://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
 ];
 
 // Install event: Caches the app shell
@@ -93,3 +93,4 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
