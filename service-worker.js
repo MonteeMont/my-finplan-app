@@ -1,7 +1,7 @@
 const CACHE_NAME = 'finplan-cache-v1';
 // This list should include all the files your app needs to run offline.
 const URLS_TO_CACHE = [
-  'finance-tracker.html',
+  '/index.html',
   'manifest.json',
   // You MUST add your icon files here once you create them:
   'icon-192.svg',
@@ -101,4 +101,5 @@ self.addEventListener('fetch', (event) => {
         // You could return a specific offline fallback page here if you had one.
       })
   );
+
 });
