@@ -1,4 +1,4 @@
-const CACHE_NAME = 'finplan-cache-v3'; // <-- Incremented cache name
+const CACHE_NAME = 'finplan-cache-v4'; // <-- Incremented to v4
 const URLS_TO_CACHE = [
   '/',
   'index.html',
@@ -16,7 +16,7 @@ const URLS_TO_CACHE = [
 
 // Install event: Caches the app shell
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing new version (v3)...');
+  console.log('Service Worker: Installing new version (v4)...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -34,7 +34,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event: Cleans up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating new version (v3)...');
+  console.log('Service Worker: Activating new version (v4)...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(

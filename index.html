@@ -343,9 +343,20 @@
     <script type="module">
         // Firebase Services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // *** UPDATED IMPORTS ***
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- !!! START OF CRITICAL UPDATE !!! ---
+        // This is your project's unique config.
+        const firebaseConfig = {
+          apiKey: "AIzaSyB3MPbG8RRu99SAFTvGoAZKjHwMmCFaZCk",
+          authDomain: "my-finplan-app.firebaseapp.com",
+          projectId: "my-finplan-app",
+          storageBucket: "my-finplan-app.firebasestorage.app",
+          messagingSenderId: "76259812142",
+          appId: "1:76259812142:web:d5f024757f040cdcb8d0bf"
+        };
+        // --- !!! END OF CRITICAL UPDATE !!! ---
 
         // --- DOM Elements ---
         const loginOverlay = document.getElementById('login-overlay');
@@ -358,16 +369,12 @@
 
         // --- STATE MANAGEMENT ---
         let state = {
-            // Master list of all actuals, will be populated from Firestore
             actuals: {}, 
-            // Current month being viewed
             currentMonthView: '', 
-            // Base figures
             baseSalary: 1937.22,
             salaryIncreaseRate: 0.023,
-            baseSavings: 0.00, // <-- CHANGED: Start at 0
-            houseSaleFunds: 23497.98, // <-- ADDED: House sale funds
-            // Plan constants
+            baseSavings: 0.00,
+            houseSaleFunds: 23497.98,
             plan: {
                 totalClearanceCost: 12192.94,
                 immigrationGoal: 8200.00,
@@ -415,12 +422,9 @@
             return date.toLocaleString('en-GB', { month: 'long', year: 'numeric' });
         };
 
-        /**
-         * Renders a +/- change indicator into a span element.
-         */
         const renderDiff = (el, value) => {
             if (!el) return;
-            if (value > 0.005) { // Use tolerance for float
+            if (value > 0.005) { 
                 el.textContent = `+${f(value)}`;
                 el.className = 'text-lg font-semibold text-green-400';
             } else if (value < -0.005) {
@@ -439,7 +443,7 @@
             return `${year}-${month}`;
         };
 
-        // --- CORE LOGIC (Functions are identical, just called at a different time) ---
+        // --- CORE LOGIC ---
 
         function getSalaryForMonth(monthString) {
             const [year, month] = monthString.split('-').map(Number);
@@ -493,7 +497,6 @@
                 savings: []
             };
 
-            // --- Phase 1: "Pre-Phase" (Dec '25 - Feb '26) ---
             if (monthString === '2025-12' || monthString === '2026-01' || monthString === '2026-02') {
                 budget.income[0].amount = state.baseSalary;
                 const addIncomeItem = budget.income.find(item => item.id === 'addIncome');
@@ -505,14 +508,12 @@
                      budget.discretionary.push({ id: 'mailOrder', name: 'Mail Order Debt', amount: 161.29 });
                 }
             }
-            // --- Phase 3: "Immigration Fund" (Mar '26 - Dec '26) ---
             else if (year === 2026 && month >= 3) {
                 budget.income[0].amount = getSalaryForMonth(monthString); 
                 budget.fixed[0].amount = 800.00; 
                 budget.fixed[1].amount = 150.00; 
                 budget.debts = [{ id: 'stepchange', name: 'StepChange DMP', amount: 50.00 }];
             }
-            // --- Phase 4: "Home Purchase" (Jan '27 onwards) ---
             else if (year >= 2027) {
                 budget.income[0].amount = getSalaryForMonth(monthString); 
                 budget.income.push({ id: 'partnerIncome', name: "Megan's Income", amount: state.plan.partnerIncome });
@@ -534,7 +535,6 @@
             budget.totalOutgoings = budget.totalFixed + budget.totalVariable + budget.totalDiscretionary + budget.totalDebts;
             budget.projectedSurplus = budget.totalIncome - budget.totalOutgoings;
 
-            // --- Define Planned Savings Transfers based on Surplus ---
             if (monthString === '2025-12' || monthString === '2026-01' || monthString === '2026-02') {
                 budget.savings = [{ id: 'emergencyFund', name: 'To Emergency Fund', amount: budget.projectedSurplus }];
             }
@@ -577,7 +577,7 @@
             };
         }
         
-        // --- RENDERING (Functions are identical, just called at a different time) ---
+        // --- RENDERING ---
 
         function getFundBalancesForMonth(monthString) {
             const baseFunds = { emergency: state.baseSavings, immigration: 0, lisaSelf: 0, lisaPartner: 0, jointSaver: 0 };
@@ -632,7 +632,7 @@
 
         function renderBudgetTable() {
             const month = state.currentMonthView;
-            if (!month) return; // Don't render if no month is set
+            if (!month) return;
             const budget = getProjectedBudget(month);
             const actuals = state.actuals[month] || {};
             
@@ -658,7 +658,6 @@
                 let catActual = 0;
                 
                 items.forEach(item => {
-                    // Use actual if set, otherwise default to 0
                     const actualValue = fNum(actuals[item.id] !== undefined ? actuals[item.id] : 0);
                     const diff = fNum(parseFloat(actualValue) - item.amount);
                     catProjected += item.amount;
@@ -682,7 +681,6 @@
                     `;
                 });
                 
-                // Category total
                 const catDiff = fNum(catActual - catProjected);
                 html += `
                     <tr class="total-row">
@@ -701,7 +699,6 @@
             renderCategory('Debts', budget.debts);
             renderCategory('Savings Transfers', budget.savings);
 
-            // --- Grand Totals ---
             const actualsTotals = getActualsForMonth(month);
             const projectedSpending = budget.totalFixed + budget.totalVariable + budget.totalDiscretionary + budget.totalDebts;
             const projectedSavings = (budget.savings || []).reduce((acc, item) => acc + item.amount, 0);
@@ -721,7 +718,8 @@
                 </tr>
                 <tr class="category-row bg-green-800 text-white">
                     <td colspan="2" class="text-right font-bold">NET UNALLOCATED</td>
-                    <td>${f(0)}</td> <td>${f(actualsTotals.actualSurplus)}</td>
+                    <td>${f(0)}</td>
+                    <td>${f(actualsTotals.actualSurplus)}</td>
                     <td class="${actualsTotals.actualSurplus < 0 ? 'diff-negative' : 'diff-positive'}">${f(actualsTotals.actualSurplus)}</td>
                 </tr>
             `;
@@ -739,7 +737,6 @@
             const currentMonth = getCurrentMonthString();
 
             for (const month of MONTHS) {
-                // ... (Calculation logic identical to getFundBalancesForMonth) ...
                 const projected = getProjectedBudget(month);
                 const actualsMonth = state.actuals[month];
                 const actuals = getActualsForMonth(month);
@@ -774,7 +771,6 @@
                     if (shortfall > 0) funds.emergency -= shortfall;
                     funds.immigration = 0; 
                 }
-                // ... (End of calculation loop) ...
                 const total = funds.emergency + funds.immigration + funds.lisaSelf + funds.lisaPartner + funds.jointSaver;
                 lastFunds = {...funds, total};
                 if (month === currentMonth) {
@@ -831,7 +827,7 @@
         
         function renderDashboard() {
             const thisMonth = state.currentMonthView; 
-            if (!thisMonth) return; // Don't render if no month is set
+            if (!thisMonth) return;
             const projected = getProjectedBudget(thisMonth);
             const actuals = getActualsForMonth(thisMonth);
             const netResult = actuals.actualSurplus; 
@@ -879,7 +875,7 @@
         }
         
         function renderAll() {
-            if (!auth.currentUser) return; // Don't render if not logged in
+            if (!auth.currentUser) return;
             renderBudgetTable();
             renderDebtTable();
             renderDashboard(); 
@@ -912,6 +908,7 @@
             state.actuals[month][id] = value;
             renderAll(); 
             try {
+                // *** UPDATED: Simplified path ***
                 const docRef = doc(db, dbCollectionPath, month);
                 await setDoc(docRef, { [id]: value }, { merge: true });
             } catch (error) {
@@ -925,7 +922,7 @@
             saveState(); 
         }
 
-        // --- NEW AUTH HANDLERS ---
+        // --- AUTH HANDLERS ---
         
         async function handleLogin(e) {
             e.preventDefault();
@@ -938,7 +935,7 @@
                 // onAuthStateChanged will handle showing the app
             } catch (error) {
                 console.error("Login failed:", error.code);
-                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email') {
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
                     loginError.textContent = 'Wrong email or password. Please try again.';
                 } else {
                     loginError.textContent = 'An error occurred. Please try again.';
@@ -971,7 +968,7 @@
 
         function attachFirestoreListener() {
             if (firestoreListenerUnsubscribe) {
-                firestoreListenerUnsubscribe(); // Detach old listener if exists
+                firestoreListenerUnsubscribe(); 
             }
             if (!budgetCollectionRef) return;
 
@@ -990,21 +987,16 @@
                 renderAll();
             }, (error) => {
                 console.error("Error with Firestore snapshot: ", error);
-                // This will likely fire if rules deny access
                 if (error.code === 'permission-denied') {
                     console.error("FIREBASE: Permission Denied. Logging out.");
-                    handleLogout(); // Force logout if rules fail
+                    handleLogout(); 
                 }
             });
         }
 
-        /**
-         * Initializes the app, connects to Firebase, and authenticates.
-         */
         async function init() {
             loadState(); 
             
-            // --- PWA Service Worker Registration ---
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('service-worker.js')
@@ -1013,7 +1005,6 @@
                 });
             }
             
-            // Set up month selector
             const monthSelector = document.getElementById('month-selector');
             let currentMonth = getCurrentMonthString();
             if (currentMonth < '2025-12') currentMonth = '2025-12';
@@ -1026,58 +1017,49 @@
                 monthSelector.appendChild(option);
             });
             
-            // Add event listeners
             document.querySelector('nav').addEventListener('click', handleTabClick);
             monthSelector.addEventListener('change', handleMonthChange);
             loginForm.addEventListener('submit', handleLogin);
             logoutButton.addEventListener('click', handleLogout);
             
-            // --- Firebase Setup ---
             try {
-                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                
+                // *** UPDATED: Using hardcoded config object from above ***
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
                 setLogLevel('Debug');
 
-                // *** UPDATED AUTH LOGIC ***
                 onAuthStateChanged(auth, (user) => {
-                    if (user && !user.isAnonymous) { // Only proceed if user is logged in AND not anonymous
+                    if (user && !user.isAnonymous) {
                         // USER IS LOGGED IN
                         userId = user.uid;
-                        dbCollectionPath = `/artifacts/${appId}/public/data/budget`;
+                        
+                        // *** UPDATED: Simplified database path ***
+                        dbCollectionPath = `budget`; // This is now a top-level collection
                         budgetCollectionRef = collection(db, dbCollectionPath);
                         
                         console.log("Authenticated. User ID:", userId);
                         console.log("Database path:", dbCollectionPath);
 
-                        // Show app, hide login
                         appContainer.classList.remove('hidden');
                         loginOverlay.classList.add('hidden');
                         
-                        // Load data and attach listener
                         attachFirestoreListener();
-                        renderAll(); // Initial render
+                        renderAll(); 
                     } else {
-                        // USER IS LOGGED OUT or ANONYMOUS
+                        // USER IS LOGGED OUT
                         if (user && user.isAnonymous) {
-                            console.log("Anonymous user detected, signing out.");
-                            signOut(auth); // Force sign out of anonymous user
+                            signOut(auth);
                         } else {
                             console.log("User is signed out.");
                         }
                         
-                        // Show login, hide app
                         appContainer.classList.add('hidden');
                         loginOverlay.classList.remove('hidden');
                         
-                        // Detach the listener
                         if (firestoreListenerUnsubscribe) {
                             firestoreListenerUnsubscribe();
                         }
-                        // Clear local data
                         state.actuals = {};
                         userId = null;
                         budgetCollectionRef = null;
@@ -1095,4 +1077,3 @@
     </script>
 </body>
 </html>
-```eof
