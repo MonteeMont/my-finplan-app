@@ -1,11 +1,11 @@
-const CACHE_NAME = 'finplan-cache-v1';
-// This list should include all the files your app needs to run offline.
+const CACHE_NAME = 'finplan-cache-v2'; // Incremented cache name to force update
 const URLS_TO_CACHE = [
-  '/index.html',
+  '/',
+  'index.html',
   'manifest.json',
-  // You MUST add your icon files here once you create them:
   'icon-192.svg',
   'icon-512.svg',
+  'icon-monochrome.svg', // <-- Added the new icon
   
   // External resources to cache
   'https://cdn.tailwindcss.com',
@@ -21,8 +21,6 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Service Worker: Caching app shell');
-        // Note: addAll() is atomic. If one file fails, the whole cache fails.
-        // It's better to cache non-essential files individually if needed.
         return cache.addAll(URLS_TO_CACHE);
       })
       .then(() => {
@@ -60,35 +58,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // For Firebase and other external resources, use a "network first" strategy
-  // to ensure data is always fresh, as this is a data-driven app.
+  // Network-first strategy for external resources
   if (event.request.url.includes('firebase') || event.request.url.includes('google')) {
     event.respondWith(
       fetch(event.request)
         .catch(() => {
-          // If network fails, try to get from cache (if it was ever cached)
           return caches.match(event.request);
         })
     );
     return;
   }
   
-  // For our app shell (HTML, icons, etc.), use a "cache first" strategy.
+  // Cache-first strategy for our app shell
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // If it's in the cache, return it.
         if (response) {
           return response;
         }
         
-        // If not, fetch it from the network.
         return fetch(event.request)
           .then((networkResponse) => {
-            // And cache the new response for next time.
             return caches.open(CACHE_NAME)
               .then((cache) => {
-                // Check if the response is valid before caching
                 if (networkResponse.status === 200) {
                     cache.put(event.request, networkResponse.clone());
                 }
@@ -98,8 +90,6 @@ self.addEventListener('fetch', (event) => {
       })
       .catch((error) => {
         console.error('Service Worker: Fetch error', error);
-        // You could return a specific offline fallback page here if you had one.
       })
   );
-
 });
