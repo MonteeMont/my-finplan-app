@@ -1,11 +1,11 @@
-const CACHE_NAME = 'finplan-cache-v2'; // Incremented cache name to force update
+const CACHE_NAME = 'finplan-cache-v3'; // <-- Incremented cache name
 const URLS_TO_CACHE = [
   '/',
   'index.html',
   'manifest.json',
   'icon-192.svg',
   'icon-512.svg',
-  'icon-monochrome.svg', // <-- Added the new icon
+  'icon-monochrome.svg', 
   
   // External resources to cache
   'https://cdn.tailwindcss.com',
@@ -16,7 +16,7 @@ const URLS_TO_CACHE = [
 
 // Install event: Caches the app shell
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing...');
+  console.log('Service Worker: Installing new version (v3)...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -34,7 +34,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event: Cleans up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating...');
+  console.log('Service Worker: Activating new version (v3)...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
@@ -71,7 +71,7 @@ self.addEventListener('fetch', (event) => {
   
   // Cache-first strategy for our app shell
   event.respondWith(
-    caches.match(event.request)
+    caches.match(event.Request.new(event.request.url))
       .then((response) => {
         if (response) {
           return response;
