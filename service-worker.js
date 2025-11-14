@@ -71,7 +71,7 @@ self.addEventListener('fetch', (event) => {
   
   // Cache-first strategy for our app shell
   event.respondWith(
-    caches.match(event.Request.new(event.request.url))
+    caches.match(event.request)
       .then((response) => {
         if (response) {
           return response;
