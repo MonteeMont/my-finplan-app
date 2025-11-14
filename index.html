@@ -3,13 +3,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Financial Plan Dashboard</title>
+    <!-- PWA Manifest Link -->
     <link rel="manifest" href="manifest.json">
-
+    
     <!-- Favicon Links -->
     <link rel="icon" href="icon-192.svg" type="image/svg+xml" sizes="192x192">
     <link rel="icon" href="icon-512.svg" type="image/svg+xml" sizes="512x512">
     <link rel="apple-touch-icon" href="icon-192.svg">
     
+    <!-- Theme color for browser UI -->
     <meta name="theme-color" content="#2d3748">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -78,18 +80,49 @@
 </head>
 <body class="bg-gray-900 text-gray-200 font-sans leading-normal tracking-normal">
 
-    <div class="container mx-auto p-4 max-w-7xl">
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-gray-800 p-8 rounded-2xl shadow-2xl">
+            <h2 class="text-3xl font-bold text-white text-center mb-2">Welcome Back</h2>
+            <p class="text-gray-400 text-center mb-6">Sign in to view your financial plan.</p>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <input type="email" id="login-email" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input type="password" id="login-password" class="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white" required>
+                </div>
+                <button type="submit" id="login-button" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition">
+                    Sign In
+                </button>
+            </form>
+            <p id="login-error" class="text-red-400 text-center mt-4"></p>
+        </div>
+    </div>
 
-        <header class="mb-6">
-            <h1 class="text-4xl font-bold text-white">Our Financial Plan Dashboard</h1>
-            <p class="text-lg text-gray-400">Track your budget, clear your debts, and build your future.</p>
+    <!-- Main App Content (Hidden by default) -->
+    <div id="app-container" class="container mx-auto p-4 max-w-7xl hidden">
+
+        <!-- Header -->
+        <header class="mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-4xl font-bold text-white">Our Financial Plan Dashboard</h1>
+                <p class="text-lg text-gray-400">Track your budget, clear your debts, and build your future.</p>
+            </div>
+            <button id="logout-button" class="bg-gray-700 text-gray-300 font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+                Sign Out
+            </button>
         </header>
 
+        <!-- Data Persistence Note -->
         <div class="bg-green-900 border border-green-700 text-green-200 px-4 py-3 rounded-lg relative mb-6" role="alert">
             <strong class="font-bold">Live Mode:</strong>
             <span class="block sm:inline">Your data is now saved to a shared cloud database and will sync in real-time.</span>
         </div>
 
+        <!-- Navigation Tabs -->
         <nav class="mb-6">
             <div class="flex flex-wrap border-b border-gray-700">
                 <button class="tab-btn active bg-gray-800 text-white py-3 px-6 rounded-t-lg font-semibold" data-tab="dashboard">Dashboard</button>
@@ -100,10 +133,13 @@
             </div>
         </nav>
 
+        <!-- Tab Content -->
         <main>
+            <!-- Dashboard Tab -->
             <div id="dashboard" class="tab-content active">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Dashboard</h2>
                 
+                <!-- Quick Summary Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-sm font-medium text-gray-400 uppercase tracking-wider">Total Savings</h3>
@@ -127,6 +163,7 @@
                     </div>
                 </div>
 
+                <!-- This Month's Snapshot -->
                 <div class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
                     <h3 class="text-2xl font-semibold mb-4 text-white">This Month's Snapshot (<span id="db-current-month"></span>)</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -146,21 +183,27 @@
                 </div>
             </div>
 
+            <!-- Budget Tracker Tab -->
             <div id="budget" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Budget Tracker</h2>
                 
+                <!-- Month Selector -->
                 <div class="mb-6">
                     <label for="month-selector" class="block text-lg font-medium text-gray-300 mb-2">Select Month to View/Edit:</label>
                     <select id="month-selector" class="bg-gray-800 border border-gray-700 text-white text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full md:w-1/2 p-3">
-                        </select>
+                        <!-- Options will be populated by JS -->
+                    </select>
                 </div>
 
+                <!-- Budget Table -->
                 <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg">
                     <table id="budget-table-render" class="w-full budget-table">
-                        </table>
+                        <!-- Content will be rendered by JS -->
+                    </table>
                 </div>
             </div>
 
+            <!-- Savings & Funds Tab -->
             <div id="savings" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Savings & Funds Projection</h2>
                 <p class="text-gray-400 mb-6">This table projects the growth of your funds over time. It uses your "Actual" data where available and "Projected" data for the future.</p>
@@ -179,11 +222,13 @@
                             </tr>
                         </thead>
                         <tbody id="savings-table-body">
-                            </tbody>
+                            <!-- Content will be rendered by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Debt Plan Tab -->
             <div id="debts" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-4 text-white">Debt Plan</h2>
                 <p class="text-gray-400 mb-6">This shows your debt clearance plan for March 1st, 2026.</p>
@@ -199,16 +244,19 @@
                             </tr>
                         </thead>
                         <tbody id="debt-table-body">
-                            </tbody>
+                            <!-- Content will be rendered by JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
 
+            <!-- Plan Overview Tab -->
             <div id="plan" class="tab-content">
                 <h2 class="text-3xl font-semibold mb-6 text-white">Your Financial Plan: Phase by Phase</h2>
                 
                 <div class="space-y-8">
                     
+                    <!-- Phase 1 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 1: The "Pre-Phase"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(December 2025 – February 2026)</p>
@@ -240,6 +288,7 @@
                         <p class="text-gray-300">Your starting savings of £0.00 will grow to <strong>£406.16</strong> from saving your surplus.</p>
                     </div>
 
+                    <!-- Phase 2 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 2: The "Total Clearance"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(March 1st, 2026)</p>
@@ -264,6 +313,7 @@
                         <p class="text-gray-300">Your total available savings (<strong>£406.16</strong> from Phase 1 + <strong>£23,497.98</strong> house sale = <strong>£23,904.14</strong>) are used to pay the <strong>£12,192.94</strong> in debts. This leaves your new <strong>Emergency Fund at £11,711.20</strong>.</p>
                     </div>
 
+                    <!-- Phase 3 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 3: The "Immigration Fund"</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(March 2026 – December 2026)</p>
@@ -287,6 +337,7 @@
                         <p class="text-gray-300">Your final <strong>Emergency Fund will be £5,328.74</strong>, which remains a strong safety net.</p>
                     </div>
 
+                    <!-- Phase 4 -->
                     <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
                         <h3 class="text-2xl font-bold text-blue-300 mb-4">Phase 4: The "Home Purchase" Plan</h3>
                         <p class="text-lg font-medium text-gray-400 mb-4">(From Early 2027)</p>
@@ -315,11 +366,22 @@
         </main>
     </div>
 
+    <!-- Firebase SDK Imports -->
     <script type="module">
         // Firebase Services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // *** UPDATED IMPORTS ***
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- DOM Elements ---
+        const loginOverlay = document.getElementById('login-overlay');
+        const appContainer = document.getElementById('app-container');
+        const loginForm = document.getElementById('login-form');
+        const loginEmail = document.getElementById('login-email');
+        const loginPassword = document.getElementById('login-password');
+        const loginError = document.getElementById('login-error');
+        const logoutButton = document.getElementById('logout-button');
 
         // --- STATE MANAGEMENT ---
         let state = {
@@ -347,6 +409,7 @@
         let userId;
         let dbCollectionPath; // Will be set after auth
         let budgetCollectionRef; // Firestore collection reference
+        let firestoreListenerUnsubscribe = null; // To stop listener on logout
 
         // --- CONSTANTS & HELPERS ---
         const MONTHS = [
@@ -403,46 +466,32 @@
             return `${year}-${month}`;
         };
 
-        // --- CORE LOGIC (Unchanged) ---
+        // --- CORE LOGIC (Functions are identical, just called at a different time) ---
 
-        /**
-         * Calculates the user's salary for a given month, including annual 2.3% raises every April.
-         */
         function getSalaryForMonth(monthString) {
             const [year, month] = monthString.split('-').map(Number);
-            const baseYear = 2026; // First raise is April 2026
-            
+            const baseYear = 2026; 
             if (year < baseYear || (year === baseYear && month < 4)) {
-                // Before first raise
                 return state.baseSalary; 
             }
-            
-            // Calculate number of raises
             let raises = year - baseYear;
             if (month < 4) {
-                raises--; // Hasn't had this year's raise yet
+                raises--; 
             }
-
             let salary = state.baseSalary;
-            // Apply raise for 2026
             salary *= (1 + state.salaryIncreaseRate);
-            // Apply raises for 2027 onwards
             if (raises > 0) {
                  salary *= Math.pow((1 + state.salaryIncreaseRate), raises);
             }
-           
             return salary;
         }
 
-        /**
-         * Generates the projected budget for any given month based on the user's multi-phase plan.
-         */
         function getProjectedBudget(monthString) {
             const [year, month] = monthString.split('-').map(Number);
             let budget = {
                 income: [
                     { id: 'salary', name: "Montee's Salary", amount: 0 },
-                    { id: 'addIncome', name: 'Additional Income', amount: 0.00 } // <-- ADDED HERE
+                    { id: 'addIncome', name: 'Additional Income', amount: 0.00 } 
                 ],
                 fixed: [
                     { id: 'rent', name: 'Rent', amount: 0 },
@@ -474,12 +523,10 @@
             // --- Phase 1: "Pre-Phase" (Dec '25 - Feb '26) ---
             if (monthString === '2025-12' || monthString === '2026-01' || monthString === '2026-02') {
                 budget.income[0].amount = state.baseSalary;
-                // Find the item and set its amount, instead of pushing
                 const addIncomeItem = budget.income.find(item => item.id === 'addIncome');
                 if (addIncomeItem) addIncomeItem.amount = 435.00;
-                
-                budget.fixed[0].amount = 695.00; // Rent
-                budget.fixed[1].amount = 150.00; // Utilities
+                budget.fixed[0].amount = 695.00; 
+                budget.fixed[1].amount = 150.00; 
                 budget.debts = DEBT_SCHEDULE.map(d => ({ id: d.id, name: d.name, amount: d.amount }));
                 if (monthString === '2025-12') {
                      budget.discretionary.push({ id: 'mailOrder', name: 'Mail Order Debt', amount: 161.29 });
@@ -487,70 +534,55 @@
             }
             // --- Phase 3: "Immigration Fund" (Mar '26 - Dec '26) ---
             else if (year === 2026 && month >= 3) {
-                budget.income[0].amount = getSalaryForMonth(monthString); // Handles Apr '26 raise
-                budget.fixed[0].amount = 800.00; // New rent
-                budget.fixed[1].amount = 150.00; // Utilities
+                budget.income[0].amount = getSalaryForMonth(monthString); 
+                budget.fixed[0].amount = 800.00; 
+                budget.fixed[1].amount = 150.00; 
                 budget.debts = [{ id: 'stepchange', name: 'StepChange DMP', amount: 50.00 }];
             }
             // --- Phase 4: "Home Purchase" (Jan '27 onwards) ---
             else if (year >= 2027) {
-                budget.income[0].amount = getSalaryForMonth(monthString); // Handles raises
+                budget.income[0].amount = getSalaryForMonth(monthString); 
                 budget.income.push({ id: 'partnerIncome', name: "Megan's Income", amount: state.plan.partnerIncome });
-                budget.fixed[0].amount = 800.00; // Rent (assume same, user can change actual)
-                budget.fixed[1].amount = 150.00; // Utilities
+                budget.fixed[0].amount = 800.00; 
+                budget.fixed[1].amount = 150.00; 
                 budget.debts = [{ id: 'stepchange', name: 'StepChange DMP', amount: 50.00 }];
-                
-                // Add LISA savings as "expenses"
                 budget.savings = [
                     { id: 'lisaSelf', name: 'LISA (Montee)', amount: state.plan.lisaContribution },
                     { id: 'lisaPartner', name: 'LISA (Megan)', amount: state.plan.lisaContribution },
                 ];
             }
             
-            // Calculate totals
             const sum = (arr) => arr.reduce((acc, item) => acc + item.amount, 0);
             budget.totalIncome = sum(budget.income);
             budget.totalFixed = sum(budget.fixed);
             budget.totalVariable = sum(budget.variable);
             budget.totalDiscretionary = sum(budget.discretionary);
             budget.totalDebts = sum(budget.debts);
-            // budget.totalSavings = sum(budget.savings); // This will be handled separately
-            
             budget.totalOutgoings = budget.totalFixed + budget.totalVariable + budget.totalDiscretionary + budget.totalDebts;
             budget.projectedSurplus = budget.totalIncome - budget.totalOutgoings;
 
             // --- Define Planned Savings Transfers based on Surplus ---
-            // --- Phase 1: "Pre-Phase" (Dec '25 - Feb '26) ---
             if (monthString === '2025-12' || monthString === '2026-01' || monthString === '2026-02') {
                 budget.savings = [{ id: 'emergencyFund', name: 'To Emergency Fund', amount: budget.projectedSurplus }];
             }
-            // --- Phase 3: "Immigration Fund" (Mar '26 - Dec '26) ---
             else if (year === 2026 && month >= 3) {
                 budget.savings = [{ id: 'immigrationFund', name: 'To Immigration Fund', amount: budget.projectedSurplus }];
             }
-            // --- Phase 4: "Home Purchase" (Jan '27 onwards) ---
             else if (year >= 2027) {
-                // LISA contributions are already in budget.savings
                 const remainingSurplus = budget.projectedSurplus - (state.plan.lisaContribution * 2);
                 budget.savings.push({ id: 'jointSaver', name: 'To Joint Home Saver', amount: remainingSurplus });
             }
-
             return budget;
         }
 
-        /**
-         * Calculates the actual surplus for a given month from user-entered data.
-         */
         function getActualsForMonth(monthString) {
             const actual = state.actuals[monthString] || {};
-            const projected = getProjectedBudget(monthString); // Get structure
-            
+            const projected = getProjectedBudget(monthString); 
             let totalIncome = 0;
             projected.income.forEach(item => {
                 const actualValue = parseFloat(actual[item.id] !== undefined ? actual[item.id] : 0);
                 totalIncome += actualValue;
             });
-            
             let totalOutgoings = 0;
             const spendingCategories = ['fixed', 'variable', 'discretionary', 'debts'];
             spendingCategories.forEach(cat => {
@@ -559,64 +591,35 @@
                     totalOutgoings += actualValue;
                 });
             });
-
             let totalSavings = 0;
             projected.savings.forEach(item => {
                  const actualValue = parseFloat(actual[item.id] !== undefined ? actual[item.id] : 0);
                  totalSavings += actualValue;
             });
-
             return {
                 totalIncome,
-                totalOutgoings, // Spending
-                totalSavings,   // Savings transfers
-                actualSurplus: totalIncome - totalOutgoings - totalSavings // Unallocated
+                totalOutgoings, 
+                totalSavings,   
+                actualSurplus: totalIncome - totalOutgoings - totalSavings 
             };
         }
         
-        // --- RENDERING (Unchanged) ---
+        // --- RENDERING (Functions are identical, just called at a different time) ---
 
-        /**
-         * Calculates the fund balances up to the end of a specific month.
-         * This is a non-rendering pure calculation function.
-         */
         function getFundBalancesForMonth(monthString) {
-            const baseFunds = {
-                emergency: state.baseSavings,
-                immigration: 0,
-                lisaSelf: 0,
-                lisaPartner: 0,
-                jointSaver: 0
-            };
-
-            // If no month is provided (e.g., before the plan starts), return base funds.
-            if (!monthString) {
-                return baseFunds;
-            }
-
+            const baseFunds = { emergency: state.baseSavings, immigration: 0, lisaSelf: 0, lisaPartner: 0, jointSaver: 0 };
+            if (!monthString) return baseFunds;
             let funds = { ...baseFunds };
             const targetIndex = MONTHS.indexOf(monthString);
+            if (targetIndex === -1) return baseFunds;
 
-            // If month isn't in our plan, just return base
-            if (targetIndex === -1) {
-                return baseFunds;
-            }
-
-            // Loop from the start of the plan up to the target month
             for (let i = 0; i <= targetIndex; i++) {
                 const month = MONTHS[i];
                 const projected = getProjectedBudget(month);
                 const actualsMonth = state.actuals[month];
-                const actuals = getActualsForMonth(month); // Get actuals regardless
-                
-                let unallocatedSurplus;
-                let emergencyTransfer = 0;
-                let immigrationTransfer = 0;
-                let lisaSelfTransfer = 0;
-                let lisaPartnerTransfer = 0;
-                let jointSaverTransfer = 0;
+                const actuals = getActualsForMonth(month); 
+                let unallocatedSurplus, emergencyTransfer = 0, immigrationTransfer = 0, lisaSelfTransfer = 0, lisaPartnerTransfer = 0, jointSaverTransfer = 0;
 
-                // Use actual values if they exist, otherwise use projected values
                 if (actualsMonth) {
                     unallocatedSurplus = actuals.actualSurplus;
                     emergencyTransfer = parseFloat(actualsMonth['emergencyFund']) || 0;
@@ -625,8 +628,7 @@
                     lisaPartnerTransfer = parseFloat(actualsMonth['lisaPartner']) || 0;
                     jointSaverTransfer = parseFloat(actualsMonth['jointSaver']) || 0;
                 } else {
-                    // Use projected logic
-                    unallocatedSurplus = 0; // Projected unallocated is 0
+                    unallocatedSurplus = 0; 
                     emergencyTransfer = (projected.savings.find(s => s.id === 'emergencyFund') || {}).amount || 0;
                     immigrationTransfer = (projected.savings.find(s => s.id === 'immigrationFund') || {}).amount || 0;
                     lisaSelfTransfer = (projected.savings.find(s => s.id === 'lisaSelf') || {}).amount || 0;
@@ -640,33 +642,24 @@
                 funds.lisaPartner += lisaPartnerTransfer;
                 funds.jointSaver += jointSaverTransfer;
 
-                // Handle special events (Clearance, Immigration Payment)
                 if (month === '2026-03') {
-                    funds.emergency += state.houseSaleFunds; // <-- ADDED: House sale funds arrive
-                    funds.emergency -= state.plan.totalClearanceCost; // <-- Existing: Debts are paid
+                    funds.emergency += state.houseSaleFunds; 
+                    funds.emergency -= state.plan.totalClearanceCost; 
                 }
                 if (month === '2027-01') {
-                    // 1. Pay for immigration
                     const shortfall = state.plan.immigrationGoal - funds.immigration;
                     if (shortfall > 0) {
                         funds.emergency -= shortfall;
                     }
-                    funds.immigration = 0; // Fund is spent
-                    
-                    // 2. Add this month's surplus to the new joint saver
-                    // The LISA transfers are already "spent" in the surplus calculation
-                    // This logic is now handled above
+                    funds.immigration = 0; 
                 }
             }
-            
             return funds;
         }
 
-        /**
-         * Renders the main budget tracking table for the selected month.
-         */
         function renderBudgetTable() {
             const month = state.currentMonthView;
+            if (!month) return; // Don't render if no month is set
             const budget = getProjectedBudget(month);
             const actuals = state.actuals[month] || {};
             
@@ -755,7 +748,8 @@
                 </tr>
                 <tr class="category-row bg-green-800 text-white">
                     <td colspan="2" class="text-right font-bold">NET UNALLOCATED</td>
-                    <td>${f(0)}</td> <td>${f(actualsTotals.actualSurplus)}</td>
+                    <td>${f(0)}</td> <!-- Projected unallocated is always 0 by this plan -->
+                    <td>${f(actualsTotals.actualSurplus)}</td>
                     <td class="${actualsTotals.actualSurplus < 0 ? 'diff-negative' : 'diff-positive'}">${f(actualsTotals.actualSurplus)}</td>
                 </tr>
             `;
@@ -764,45 +758,21 @@
             document.getElementById('budget-table-render').innerHTML = html;
         }
 
-        /**
-         * Renders the savings projection table, mixing actuals with projections.
-         */
         function renderSavingsTable() {
             let html = '';
-            let funds = {
-                emergency: state.baseSavings,
-                immigration: 0,
-                lisaSelf: 0,
-                lisaPartner: 0,
-                jointSaver: 0
-            };
-            
+            let funds = { emergency: state.baseSavings, immigration: 0, lisaSelf: 0, lisaPartner: 0, jointSaver: 0 };
             let previousFunds = {...funds, total: state.baseSavings};
-
-            // These will be used to populate the dashboard
             let lastFunds = {...funds};
-            let currentFunds = null; // To store funds for the current real month
+            let currentFunds = null; 
             const currentMonth = getCurrentMonthString();
 
-            const fDiff = (num) => {
-                if (num > 0.005) return `<span class="diff-positive">+${f(num)}</span>`; // Use 0.005 for float precision
-                if (num < -0.005) return `<span class="diff-negative">${f(num)}</span>`;
-                return `<span class="text-gray-500">${f(0)}</span>`;
-            };
-
             for (const month of MONTHS) {
+                // ... (Calculation logic identical to getFundBalancesForMonth) ...
                 const projected = getProjectedBudget(month);
                 const actualsMonth = state.actuals[month];
-                const actuals = getActualsForMonth(month); // Get actuals regardless
-                
+                const actuals = getActualsForMonth(month);
                 let unallocatedSurplus;
-                let emergencyTransfer = 0;
-                let immigrationTransfer = 0;
-                let lisaSelfTransfer = 0;
-                let lisaPartnerTransfer = 0;
-                let jointSaverTransfer = 0;
-
-                // Use actual values if they exist, otherwise use projected values
+                let emergencyTransfer = 0, immigrationTransfer = 0, lisaSelfTransfer = 0, lisaPartnerTransfer = 0, jointSaverTransfer = 0;
                 if (actualsMonth) {
                     unallocatedSurplus = actuals.actualSurplus;
                     emergencyTransfer = parseFloat(actualsMonth['emergencyFund']) || 0;
@@ -811,56 +781,33 @@
                     lisaPartnerTransfer = parseFloat(actualsMonth['lisaPartner']) || 0;
                     jointSaverTransfer = parseFloat(actualsMonth['jointSaver']) || 0;
                 } else {
-                    // Use projected logic
-                    unallocatedSurplus = 0; // Projected unallocated is 0
+                    unallocatedSurplus = 0; 
                     emergencyTransfer = (projected.savings.find(s => s.id === 'emergencyFund') || {}).amount || 0;
                     immigrationTransfer = (projected.savings.find(s => s.id === 'immigrationFund') || {}).amount || 0;
                     lisaSelfTransfer = (projected.savings.find(s => s.id === 'lisaSelf') || {}).amount || 0;
                     lisaPartnerTransfer = (projected.savings.find(s => s.id === 'lisaPartner') || {}).amount || 0;
                     jointSaverTransfer = (projected.savings.find(s => s.id === 'jointSaver') || {}).amount || 0;
                 }
-                
                 funds.emergency += (unallocatedSurplus + emergencyTransfer);
                 funds.immigration += immigrationTransfer;
                 funds.lisaSelf += lisaSelfTransfer;
                 funds.lisaPartner += lisaPartnerTransfer;
                 funds.jointSaver += jointSaverTransfer;
-
-                // Handle special events (Clearance, Immigration Payment)
                 if (month === '2026-03') {
-                    funds.emergency += state.houseSaleFunds; // <-- ADDED: House sale funds arrive
-                    funds.emergency -= state.plan.totalClearanceCost; // <-- Existing: Debts are paid
+                    funds.emergency += state.houseSaleFunds; 
+                    funds.emergency -= state.plan.totalClearanceCost; 
                 }
                 if (month === '2027-01') {
-                    // 1. Pay for immigration
                     const shortfall = state.plan.immigrationGoal - funds.immigration;
-                    if (shortfall > 0) {
-                        funds.emergency -= shortfall;
-                    }
-                    funds.immigration = 0; // Fund is spent
-                    
-                    // 2. Add this month's surplus to the new joint saver
-                    // The LISA transfers are already "spent" in the surplus calculation
-                    // This logic is now handled above
+                    if (shortfall > 0) funds.emergency -= shortfall;
+                    funds.immigration = 0; 
                 }
-                
+                // ... (End of calculation loop) ...
                 const total = funds.emergency + funds.immigration + funds.lisaSelf + funds.lisaPartner + funds.jointSaver;
-                
-                const diffs = {
-                    emergency: funds.emergency - previousFunds.emergency,
-                    immigration: funds.immigration - previousFunds.immigration,
-                    lisaSelf: funds.lisaSelf - previousFunds.lisaSelf,
-                    lisaPartner: funds.lisaPartner - previousFunds.lisaPartner,
-                    jointSaver: funds.jointSaver - previousFunds.jointSaver,
-                    total: total - previousFunds.total
-                };
-                
                 lastFunds = {...funds, total};
-
                 if (month === currentMonth) {
-                    currentFunds = {...lastFunds}; // Capture the state at the end of the current month
+                    currentFunds = {...lastFunds};
                 }
-
                 html += `
                     <tr>
                         <td>${getMonthName(month)}</td>
@@ -872,36 +819,19 @@
                         <td class="font-bold">${f(total)}</td>
                     </tr>
                 `;
-
                 previousFunds = {...lastFunds};
             }
-            
             document.getElementById('savings-table-body').innerHTML = html;
-            
-            // If the plan hasn't started yet (i.e., current real month is before Nov 2025),
-            // show the base savings as the current state.
             if (!currentFunds) {
                  if (currentMonth < '2025-12') {
-                    currentFunds = { 
-                        emergency: state.baseSavings, 
-                        immigration: 0, 
-                        lisaSelf: 0, 
-                        lisaPartner: 0, 
-                        jointSaver: 0, 
-                        total: state.baseSavings 
-                    };
+                    currentFunds = { emergency: state.baseSavings, immigration: 0, lisaSelf: 0, lisaPartner: 0, jointSaver: 0, total: state.baseSavings };
                  } else {
-                     // Fallback in case something goes wrong (e.g., currentMonth is past 2030)
                      currentFunds = lastFunds;
                  }
             }
-            
-            return currentFunds; // Return the current data for the dashboard
+            return currentFunds;
         }
 
-        /**
-         * Renders the simple debt plan table.
-         */
         function renderDebtTable() {
             let html = '';
             DEBT_SCHEDULE.forEach(debt => {
@@ -916,7 +846,6 @@
                     `;
                 }
             });
-            // Add StepChange
             html += `
                 <tr>
                     <td>StepChange DMP</td>
@@ -928,107 +857,74 @@
             document.getElementById('debt-table-body').innerHTML = html;
         }
         
-        /**
-         * Renders the main dashboard cards and info.
-         */
         function renderDashboard() {
-            // --- This Month's Snapshot (based on selected month) ---
-            const thisMonth = state.currentMonthView; // This is from the dropdown
+            const thisMonth = state.currentMonthView; 
+            if (!thisMonth) return; // Don't render if no month is set
             const projected = getProjectedBudget(thisMonth);
             const actuals = getActualsForMonth(thisMonth);
-            const netResult = actuals.actualSurplus; // This is now the "unallocated" amount
-            
+            const netResult = actuals.actualSurplus; 
             document.getElementById('db-current-month').textContent = getMonthName(thisMonth);
             document.getElementById('db-projected-surplus').textContent = f(projected.projectedSurplus);
-            document.getElementById('db-actual-surplus').textContent = f(actuals.totalIncome - actuals.totalOutgoings); // Show actual surplus before unallocated
+            document.getElementById('db-actual-surplus').textContent = f(actuals.totalIncome - actuals.totalOutgoings); 
             document.getElementById('db-net-result').textContent = f(netResult);
             document.getElementById('db-net-result').className = `text-3xl font-bold mt-2 ${netResult < 0 ? 'text-red-400' : 'text-green-400'}`;
-
-            // --- Main Dashboard Cards (with +/- diff) ---
-            // These cards will now be based on the *current real-world month*, not the selected dropdown month
             
-            // Re-run the savings table render (it populates the table UI)
             renderSavingsTable(); 
-            
-            // Get the current real-world month
             const currentRealMonth = getCurrentMonthString();
             let selectedMonthForCards = currentRealMonth;
             let prevMonthForCards = null;
-
-            // Find the index of the real month
             const currentRealMonthIndex = MONTHS.indexOf(currentRealMonth);
             
             if (currentRealMonthIndex === -1) {
-                // We are before the plan's start month (e.g., it's Nov 2025)
-                selectedMonthForCards = null; // Will use base savings
+                selectedMonthForCards = null; 
                 prevMonthForCards = null;
             } else if (currentRealMonthIndex === 0) {
-                 // We are in the first month of the plan
-                 prevMonthForCards = null; // Diff will be against base savings
+                 prevMonthForCards = null; 
             } else {
-                // We are in the plan, get the previous month
                 prevMonthForCards = MONTHS[currentRealMonthIndex - 1];
             }
             
-            // Get funds for the *real* month and the *real previous* month
             const selectedFunds = getFundBalancesForMonth(selectedMonthForCards);
             const prevFunds = getFundBalancesForMonth(prevMonthForCards);
-
-            // Calculate totals for selected month
             const selectedHomeDeposit = selectedFunds.lisaSelf + selectedFunds.lisaPartner + selectedFunds.jointSaver;
             const selectedTotal = selectedFunds.emergency + selectedFunds.immigration + selectedHomeDeposit;
-
-            // Calculate totals for previous month
             const prevHomeDeposit = prevFunds.lisaSelf + prevFunds.lisaPartner + prevFunds.jointSaver;
             const prevTotal = prevFunds.emergency + prevFunds.immigration + prevHomeDeposit;
-            
-            // Calculate diffs
             const diffTotal = selectedTotal - prevTotal;
             const diffEmergency = selectedFunds.emergency - prevFunds.emergency;
             const diffImmigration = selectedFunds.immigration - prevFunds.immigration;
             const diffHomeDeposit = selectedHomeDeposit - prevHomeDeposit;
             
-            // Update main card figures
             document.getElementById('db-total-savings').textContent = f(selectedTotal);
             document.getElementById('db-emergency-fund').textContent = f(selectedFunds.emergency);
             document.getElementById('db-immigration-fund').textContent = f(selectedFunds.immigration);
             document.getElementById('db-home-deposit').textContent = f(selectedHomeDeposit);
             
-            // Update diff elements
             renderDiff(document.getElementById('db-total-savings-diff'), diffTotal);
             renderDiff(document.getElementById('db-emergency-fund-diff'), diffEmergency);
             renderDiff(document.getElementById('db-immigration-fund-diff'), diffImmigration);
             renderDiff(document.getElementById('db-home-deposit-diff'), diffHomeDeposit);
         }
         
-        /**
-         * Renders all dynamic parts of the UI.
-         */
         function renderAll() {
+            if (!auth.currentUser) return; // Don't render if not logged in
             renderBudgetTable();
             renderDebtTable();
-            renderDashboard(); // This also re-renders the savings table
-            saveState(); // Save UI state (like current month)
+            renderDashboard(); 
+            saveState(); 
         }
 
         // --- EVENT HANDLERS ---
         
-        /**
-         * Handles tab switching.
-         */
         function handleTabClick(e) {
             const clickedTab = e.target.closest('.tab-btn');
             if (!clickedTab) return;
-
-            // Update button styles
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active', 'bg-gray-800', 'text-white');
                 btn.classList.add('text-gray-400', 'hover:bg-gray-800', 'hover:text-white');
             });
             clickedTab.classList.add('active', 'bg-gray-800', 'text-white');
             clickedTab.classList.remove('text-gray-400', 'hover:bg-gray-800', 'hover:text-white');
-
-            // Show/hide content
             const tabId = clickedTab.dataset.tab;
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -1036,53 +932,58 @@
             document.getElementById(tabId).classList.add('active');
         }
         
-        /**
-         * Handles changes to the "Actual" input fields.
-         * This now writes to Firestore.
-         */
         async function handleActualChange(event) {
             const { month, id } = event.target.dataset;
             const value = parseFloat(event.target.value) || 0;
-
-            if (!db) {
-                console.error("Database not initialized!");
-                return;
-            }
-
-            // Update the local state immediately for responsiveness
-            if (!state.actuals[month]) {
-                state.actuals[month] = {};
-            }
+            if (!db) { console.error("Database not initialized!"); return; }
+            if (!state.actuals[month]) state.actuals[month] = {};
             state.actuals[month][id] = value;
-            renderAll(); // Re-render locally
-
-            // Asynchronously save to Firestore
+            renderAll(); 
             try {
                 const docRef = doc(db, dbCollectionPath, month);
-                // Use setDoc with merge: true to create/update just this one field
                 await setDoc(docRef, { [id]: value }, { merge: true });
             } catch (error) {
                 console.error("Error writing to Firestore: ", error);
-                // Optionally, revert the change or show an error to the user
             }
         }
         
-        /**
-         * Handles changing the month on the Budget Tracker.
-         */
         function handleMonthChange(event) {
             state.currentMonthView = event.target.value;
             renderBudgetTable();
-            saveState(); // Save the new UI view
+            saveState(); 
+        }
+
+        // --- NEW AUTH HANDLERS ---
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = loginEmail.value;
+            const password = loginPassword.value;
+            loginError.textContent = '';
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                // onAuthStateChanged will handle showing the app
+            } catch (error) {
+                console.error("Login failed:", error.code);
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email') {
+                    loginError.textContent = 'Wrong email or password. Please try again.';
+                } else {
+                    loginError.textContent = 'An error occurred. Please try again.';
+                }
+            }
+        }
+
+        function handleLogout() {
+            signOut(auth).catch((error) => {
+                console.error("Logout failed:", error);
+            });
         }
 
         // --- LOCAL STORAGE (for UI state) ---
         
         function saveState() {
-            // Only save non-synced UI state
-            const uiState = {
-                currentMonthView: state.currentMonthView
-            };
+            const uiState = { currentMonthView: state.currentMonthView };
             localStorage.setItem('financeTrackerState', JSON.stringify(uiState));
         }
 
@@ -1096,32 +997,32 @@
 
         // --- FIREBASE INITIALIZATION ---
 
-        /**
-         * Attaches a real-time listener to the budget collection.
-         */
         function attachFirestoreListener() {
+            if (firestoreListenerUnsubscribe) {
+                firestoreListenerUnsubscribe(); // Detach old listener if exists
+            }
             if (!budgetCollectionRef) return;
 
-            onSnapshot(budgetCollectionRef, (snapshot) => {
+            firestoreListenerUnsubscribe = onSnapshot(budgetCollectionRef, (snapshot) => {
                 console.log("Firestore data updated!");
                 snapshot.docChanges().forEach((change) => {
                     const docId = change.doc.id;
                     const docData = change.doc.data();
-                    
                     if (change.type === "added" || change.type === "modified") {
-                        // Merge the new data into the local state
                         state.actuals[docId] = { ...state.actuals[docId], ...docData };
                     }
                     if (change.type === "removed") {
-                        // This shouldn't happen in our app, but good to handle
                         delete state.actuals[docId];
                     }
                 });
-                
-                // Re-render everything with the new data
                 renderAll();
             }, (error) => {
                 console.error("Error with Firestore snapshot: ", error);
+                // This will likely fire if rules deny access
+                if (error.code === 'permission-denied') {
+                    console.error("FIREBASE: Permission Denied. Logging out.");
+                    handleLogout(); // Force logout if rules fail
+                }
             });
         }
 
@@ -1129,94 +1030,91 @@
          * Initializes the app, connects to Firebase, and authenticates.
          */
         async function init() {
-            loadState(); // Load UI state (currentMonthView)
+            loadState(); 
             
             // --- PWA Service Worker Registration ---
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('service-worker.js')
-                        .then((registration) => {
-                            console.log('Service Worker registered successfully:', registration.scope);
-                        })
-                        .catch((error) => {
-                            console.error('Service Worker registration failed:', error);
-                        });
+                        .then((reg) => console.log('Service Worker registered.', reg.scope))
+                        .catch((err) => console.error('Service Worker registration failed:', err));
                 });
             }
             
             // Set up month selector
             const monthSelector = document.getElementById('month-selector');
             let currentMonth = getCurrentMonthString();
-            
-            // If it's before the plan starts, set to the start of the plan
-            if (currentMonth < '2025-12') {
-                currentMonth = '2025-12';
-            }
-            
-            if (!state.currentMonthView) {
-                state.currentMonthView = currentMonth;
-            }
-
+            if (currentMonth < '2025-12') currentMonth = '2025-12';
+            if (!state.currentMonthView) state.currentMonthView = currentMonth;
             MONTHS.forEach(month => {
                 const option = document.createElement('option');
                 option.value = month;
                 option.textContent = getMonthName(month);
-                if (month === state.currentMonthView) {
-                    option.selected = true;
-                }
+                if (month === state.currentMonthView) option.selected = true;
                 monthSelector.appendChild(option);
             });
             
             // Add event listeners
             document.querySelector('nav').addEventListener('click', handleTabClick);
             monthSelector.addEventListener('change', handleMonthChange);
+            loginForm.addEventListener('submit', handleLogin);
+            logoutButton.addEventListener('click', handleLogout);
             
             // --- Firebase Setup ---
             try {
-                // Get config from global variables
                 const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
                 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
                 
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
-                
-                // Set Firestore log level for debugging
                 setLogLevel('Debug');
 
-                // Sign in
-                const authToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-                if (authToken) {
-                    await signInWithCustomToken(auth, authToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Auth state listener
+                // *** UPDATED AUTH LOGIC ***
                 onAuthStateChanged(auth, (user) => {
-                    if (user) {
+                    if (user && !user.isAnonymous) { // Only proceed if user is logged in AND not anonymous
+                        // USER IS LOGGED IN
                         userId = user.uid;
-                        // Use the "public" path for collaboration
                         dbCollectionPath = `/artifacts/${appId}/public/data/budget`;
                         budgetCollectionRef = collection(db, dbCollectionPath);
                         
                         console.log("Authenticated. User ID:", userId);
                         console.log("Database path:", dbCollectionPath);
 
+                        // Show app, hide login
+                        appContainer.classList.remove('hidden');
+                        loginOverlay.classList.add('hidden');
+                        
                         // Load data and attach listener
                         attachFirestoreListener();
-                        
-                        // Initial render (will be updated by listener)
-                        renderAll();
+                        renderAll(); // Initial render
                     } else {
-                        console.log("User is signed out.");
+                        // USER IS LOGGED OUT or ANONYMOUS
+                        if (user && user.isAnonymous) {
+                            console.log("Anonymous user detected, signing out.");
+                            signOut(auth); // Force sign out of anonymous user
+                        } else {
+                            console.log("User is signed out.");
+                        }
+                        
+                        // Show login, hide app
+                        appContainer.classList.add('hidden');
+                        loginOverlay.classList.remove('hidden');
+                        
+                        // Detach the listener
+                        if (firestoreListenerUnsubscribe) {
+                            firestoreListenerUnsubscribe();
+                        }
+                        // Clear local data
+                        state.actuals = {};
+                        userId = null;
+                        budgetCollectionRef = null;
                     }
                 });
 
             } catch (error) {
                 console.error("Firebase Initialization Error:", error);
-                // Fallback render without database
-                renderAll();
+                loginError.textContent = "Error loading app. Check console.";
             }
         }
 
@@ -1225,4 +1123,3 @@
     </script>
 </body>
 </html>
-
