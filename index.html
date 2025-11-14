@@ -343,7 +343,15 @@
     <script type="module">
         // Firebase Services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // *** UPDATED IMPORTS ***
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            setPersistence, 
+            localPersistence 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- !!! START OF CRITICAL UPDATE !!! ---
@@ -1028,6 +1036,13 @@
                 db = getFirestore(app);
                 auth = getAuth(app);
                 setLogLevel('Debug');
+
+                // --- !!! START OF NEW FIX !!! ---
+                // Explicitly set persistence to 'local' (persists across browser restarts)
+                // This ensures the login is saved.
+                await setPersistence(auth, localPersistence);
+                console.log("Firebase auth persistence set to 'local'.");
+                // --- !!! END OF NEW FIX !!! ---
 
                 onAuthStateChanged(auth, (user) => {
                     if (user && !user.isAnonymous) {

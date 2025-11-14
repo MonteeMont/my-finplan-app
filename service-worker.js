@@ -1,4 +1,4 @@
-const CACHE_NAME = 'finplan-cache-v4'; // <-- Incremented to v4
+const CACHE_NAME = 'finplan-cache-v5'; // <-- Incremented to v5
 const URLS_TO_CACHE = [
   '/',
   'index.html',
@@ -10,13 +10,13 @@ const URLS_TO_CACHE = [
   // External resources to cache
   'https://cdn.tailwindcss.com',
   'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
+  'https.://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
   'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
 ];
 
 // Install event: Caches the app shell
 self.addEventListener('install', (event) => {
-  console.log('Service Worker: Installing new version (v4)...');
+  console.log('Service Worker: Installing new version (v5)...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -34,7 +34,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event: Cleans up old caches
 self.addEventListener('activate', (event) => {
-  console.log('Service Worker: Activating new version (v4)...');
+  console.log('Service Worker: Activating new version (v5)...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
