@@ -20,7 +20,7 @@
       "purpose": "any maskable"
     },
     {
-      "src": "icon-monochrome.svg",
+      "src": "icon-monochrome-v2.svg",
       "type": "image/svg+xml",
       "purpose": "monochrome"
     }
