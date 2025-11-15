@@ -8,9 +8,9 @@ const URLS_TO_CACHE = [
   'icon-monochrome.svg', 
   
   // External resources to cache
-  'https://cdn.tailwindcss.com',
+  // 'https://cdn.tailwindcss.com', // <-- REMOVED THIS LINE. It was breaking the cache.
   'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js', // Typo was fixed
+  'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js',
   'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js'
 ];
 
