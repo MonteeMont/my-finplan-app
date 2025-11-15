@@ -352,7 +352,7 @@
             setPersistence,
             browserLocalPersistence // <-- *** THIS IS THE FIX (was 'localPersistence') ***
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- This is your project's unique config ---
         const firebaseConfig = {
@@ -944,11 +944,20 @@
         }
 
         // --- FIREBASE INITIALIZATION ---
-        function attachFirestoreListener() {
-            if (firestoreListenerUnsubscribe) { firestoreListenerUnsubscribe(); }
-            if (!budgetCollectionRef) return;
+       function attachFirestoreListener() {
+            if (firestoreListenerUnsubscribe) { firestoreListenerUnsubscribe(); }
+            if (!budgetCollectionRef) return;
 
-            firestoreListenerUnsubscribe = onSnapshot(budgetCollectionRef, (snapshot) => {
+            // Get the currently logged-in user
+            const user = auth.currentUser;
+            if (!user) return; // Stop if no user is signed in
+
+            // Create a query 'q' to get ONLY this user's documents
+            console.log(`Querying budget for user: ${user.uid}`);
+            const q = query(budgetCollectionRef, where("uid", "==", user.uid));
+
+            // Listen to the query 'q', not the whole collection
+            firestoreListenerUnsubscribe = onSnapshot(q, (snapshot) => {
                 console.log("Firestore data updated!");
                 snapshot.docChanges().forEach((change) => {
                     const docId = change.doc.id;
