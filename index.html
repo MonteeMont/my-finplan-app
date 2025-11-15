@@ -1,78 +1,22 @@
 <html lang="en" class="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Financial Plan Dashboard</title>
-    <link rel="manifest" href="manifest.json">
-    
-    <link rel="icon" href="icon-192.svg" type="image/svg+xml" sizes="192x192">
-    <link rel="icon" href="icon-512.svg" type="image/svg+xml" sizes="512x512">
-    <link rel="apple-touch-icon" href="icon-192.svg">
-    <link href="/css/output.css" rel="stylesheet">
-    
-    <meta name="theme-color" content="#2d3748">
-    <style>
-        .tab-content {
-            display: none;
-            transition: opacity 0.3s ease;
-        }
-        .tab-content.active {
-            display: block;
-            opacity: 1;
-        }
-        
-        .budget-table th, .budget-table td {
-            border: 1px solid #4a5568; /* md:border-gray-700 */
-            padding: 0.75rem;
-            text-align: left;
-        }
-        .budget-table th {
-            background-color: #2d3748; /* md:bg-gray-800 */
-            color: #e2e8f0; /* md:text-gray-200 */
-            font-weight: 600;
-        }
-        .budget-table .category-row {
-            background-color: #4a5568; /* md:bg-gray-700 */
-            color: #ffffff;
-            font-weight: bold;
-        }
-        .budget-table .total-row {
-            background-color: #2d3748; /* md:bg-gray-800 */
-            color: #e2e8f0; /* md:text-gray-200 */
-            font-weight: bold;
-        }
-        .budget-table .diff-negative {
-            color: #f87171; /* red-400 */
-        }
-        .budget-table .diff-positive {
-            color: #4ade80; /* green-400 */
-        }
-        .budget-table input[type="number"] {
-            background-color: #1a202c; /* md:bg-gray-900 */
-            color: #e2e8f0; /* md:text-gray-200 */
-            border: 1px solid #718096; /* md:border-gray-600 */
-            border-radius: 0.375rem;
-            padding: 0.5rem;
-            width: 100px;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2d3748;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #718096;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0;
-        }
-    </style>
-</head>
+<header class="mb-6 flex justify-between items-center">
+    <div>
+        <h1 class="text-4xl font-bold text-white">Our Financial Plan Dashboard</h1>
+        <p class="text-lg text-gray-400">Track your budget, clear your debts, and build your future.</p>
+    </div>
+
+    <button id="hamburger-button" class="p-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+    </button>
+</header>
+
+<div id="mobile-menu" class="hidden bg-gray-800 rounded-lg p-4 mb-6">
+    <button id="logout-button-mobile" class="w-full bg-gray-700 text-gray-300 font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition">
+        Sign Out
+    </button>
+</div>
 <body class="bg-gray-900 text-gray-200 font-sans leading-normal tracking-normal">
 
    <div id="login-overlay" class="fixed inset-0 bg-gray-900 z-50 flex items-center justify-center p-4">
@@ -392,7 +336,6 @@
         const loginEmail = document.getElementById('login-email');
         const loginPassword = document.getElementById('login-password');
         const loginError = document.getElementById('login-error');
-        const logoutButtonDesktop = document.getElementById('logout-button-desktop');
         const logoutButtonMobile = document.getElementById('logout-button-mobile');
         const hamburgerButton = document.getElementById('hamburger-button');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -1025,10 +968,9 @@
             document.querySelector('nav').addEventListener('click', handleTabClick);
             monthSelector.addEventListener('change', handleMonthChange);
             loginForm.addEventListener('submit', handleLogin);
-            logoutButtonDesktop.addEventListener('click', handleLogout);
             logoutButtonMobile.addEventListener('click', handleLogout);
             hamburgerButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('hidden');
 });
             
             try {
