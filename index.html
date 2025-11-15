@@ -352,7 +352,7 @@
             setPersistence,
             browserLocalPersistence // <-- *** THIS IS THE FIX (was 'localPersistence') ***
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel, where, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- This is your project's unique config ---
         const firebaseConfig = {
