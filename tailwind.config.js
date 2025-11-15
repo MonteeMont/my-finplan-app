@@ -1,7 +1,7 @@
 module.exports = {
   content: [
-    "./public/**/*.html", // Points to your HTML file
-    "./public/**/*.js",   // Points to your main JS file
+    "./index.html", // Looks at index.html in the root
+    "./*.js"        // Looks at any .js files in the root
   ],
   theme: {
     extend: {},
