@@ -12,7 +12,6 @@
     
     <meta name="theme-color" content="#2d3748">
     <style>
-        /* Simple transition for tab content */
         .tab-content {
             display: none;
             transition: opacity 0.3s ease;
@@ -22,7 +21,6 @@
             opacity: 1;
         }
         
-        /* Custom styles for a spreadsheet-like table */
         .budget-table th, .budget-table td {
             border: 1px solid #4a5568; /* md:border-gray-700 */
             padding: 0.75rem;
@@ -355,18 +353,16 @@
     <script type="module">
         // Firebase Services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // *** IMPORTS UPDATED FOR LOGIN PERSISTENCE ***
         import { 
             getAuth, 
             onAuthStateChanged, 
             signInWithEmailAndPassword, 
             signOut, 
             setPersistence,
-            browserLocalPersistence // <-- *** THIS IS THE FIX (was 'localPersistence') ***
+            browserLocalPersistence
         } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, collection, onSnapshot, setLogLevel, where, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // --- This is your project's unique config ---
         const firebaseConfig = {
           apiKey: "AIzaSyB3MPbG8RRu99SAFTvGoAZKjHwMmCFaZCk",
           authDomain: "my-finplan-app.firebaseapp.com",
@@ -375,7 +371,6 @@
           messagingSenderId: "76259812142",
           appId: "1:76259812142:web:d5f024757f040cdcb8d0bf"
         };
-        // --- End of config ---
 
         // --- DOM Elements ---
         const loginOverlay = document.getElementById('login-overlay');
@@ -673,6 +668,9 @@
                             <td>
                                 <input type="number" 
                                        class="actual-input" 
+                                       id="actual-${month}-${item.id}"
+                                       name="actual-${item.id}"
+                                       autocomplete="off"
                                        data-month="${month}" 
                                        data-id="${item.id}" 
                                        value="${actualValue}" 
@@ -792,11 +790,11 @@
             }
             document.getElementById('savings-table-body').innerHTML = html;
             if (!currentFunds) {
-                 if (currentMonth < '2025-12') {
+                  if (currentMonth < '2025-12') {
                     currentFunds = { emergency: state.baseSavings, immigration: 0, lisaSelf: 0, lisaPartner: 0, jointSaver: 0, total: state.baseSavings };
-                 } else {
-                     currentFunds = lastFunds;
-                 }
+                  } else {
+                        currentFunds = lastFunds;
+                  }
             }
             return currentFunds;
         }
@@ -848,7 +846,7 @@
             } else if (currentRealMonthIndex === 0) {
                  prevMonthForCards = null; 
             } else {
-                prevMonthForCards = MONTHS[currentRealMonthIndex - 1];
+                 prevMonthForCards = MONTHS[currentRealMonthIndex - 1];
             }
             
             const selectedFunds = getFundBalancesForMonth(selectedMonthForCards);
@@ -904,7 +902,6 @@
             state.actuals[month][id] = value;
             renderAll(); 
             try {
-                // *** UPDATED: Simplified path ***
                 const docRef = doc(db, dbCollectionPath, month);
                 await setDoc(docRef, { [id]: value }, { merge: true });
             } catch (error) {
@@ -926,7 +923,6 @@
             
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                // onAuthStateChanged will handle showing the app
             } catch (error) {
                 console.error("Login failed:", error.code);
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/user-not-found') {
@@ -957,19 +953,16 @@
 
         // --- FIREBASE INITIALIZATION ---
        function attachFirestoreListener() {
-            if (firestoreListenerUnsubscribe) { firestoreListenerUnsubscribe(); }
-            if (!budgetCollectionRef) return;
+            if (firestoreListenerUnsubscribe) { firestoreListenerUnsubscribe(); }
+            if (!budgetCollectionRef) return;
 
-            // Get the currently logged-in user
             const user = auth.currentUser;
-            if (!user) return; // Stop if no user is signed in
+            if (!user) return;
 
-            // Create a query 'q' to get ONLY this user's documents
             console.log(`Querying budget for user: ${user.uid}`);
             const q = query(budgetCollectionRef, where("uid", "==", user.uid));
 
-            // Listen to the query 'q', not the whole collection
-            firestoreListenerUnsubscribe = onSnapshot(q, (snapshot) => {
+            firestoreListenerUnsubscribe = onSnapshot(q, (snapshot) => {
                 console.log("Firestore data updated!");
                 snapshot.docChanges().forEach((change) => {
                     const docId = change.doc.id;
@@ -1019,25 +1012,22 @@
             logoutButton.addEventListener('click', handleLogout);
             
             try {
-                // *** UPDATED: Using hardcoded config object from above ***
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
                 setLogLevel('Debug');
 
-                // --- !!! THIS IS THE FIX !!! ---
-                // Tell Firebase to save the login to the device (not just the session)
-                await setPersistence(auth, browserLocalPersistence); // <-- *** THIS IS THE FIX (was 'localPersistence') ***
+               
+                await setPersistence(auth, browserLocalPersistence); 
                 console.log("Firebase auth persistence set to 'local'.");
-                // --- !!! END OF FIX !!! ---
+                
 
                 onAuthStateChanged(auth, (user) => {
                     if (user && !user.isAnonymous) {
                         // USER IS LOGGED IN
                         userId = user.uid;
                         
-                        // *** UPDATED: Simplified database path ***
-                        dbCollectionPath = `budget`; // This is now a top-level collection
+                        dbCollectionPath = `budget`;
                         budgetCollectionRef = collection(db, dbCollectionPath);
                         
                         console.log("Authenticated. User ID:", userId);
@@ -1049,7 +1039,6 @@
                         attachFirestoreListener();
                         renderAll(); 
                     } else {
-                        // USER IS LOGGED OUT
                         if (user && user.isAnonymous) {
                             signOut(auth);
                         } else {
@@ -1074,7 +1063,6 @@
             }
         }
 
-        // Run the app
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
