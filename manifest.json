@@ -22,6 +22,6 @@
     {
       "src": "icon-monochrome.svg",
       "type": "image/svg+xml",
-      "purpose": "monochrome"
-    },
+      "purpose": "monochrome maskable"
+    }
   ]
