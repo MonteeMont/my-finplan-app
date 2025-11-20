@@ -400,6 +400,8 @@
         const logoutButtonMobile = document.getElementById('logout-button-mobile');
         const hamburgerButton = document.getElementById('hamburger-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const budgetForm = document.getElementById('budget-actuals-form');
+        const budgetSubmitStatus = document.getElementById('budget-submit-status');
 
         // --- STATE & GLOBALS ---
         let state = {
@@ -693,8 +695,7 @@
                                        autocomplete="off"
                                        data-month="${month}" 
                                        data-id="${item.id}" 
-                                       value="${actualValue}" 
-                                       onchange="handleActualChange(event)">
+                                       value="${actualValue}">
                             </td>
                             <td class="${parseFloat(diff) < 0 ? 'diff-negative' : 'diff-positive'}">${f(parseFloat(diff))}</td>
                         </tr>
@@ -914,20 +915,69 @@
             });
             document.getElementById(tabId).classList.add('active');
         }
-        async function handleActualChange(event) {
-            const { month, id } = event.target.dataset;
-            const value = parseFloat(event.target.value) || 0;
-            if (!db) { console.error("Database not initialized!"); return; }
-            if (!state.actuals[month]) state.actuals[month] = {};
-            state.actuals[month][id] = value;
-            renderAll(); 
-            try {
-                const docRef = doc(db, dbCollectionPath, month);
-                await setDoc(docRef, { [id]: value }, { merge: true });
-            } catch (error) {
-                console.error("Error writing to Firestore: ", error);
-            }
-        }
+
+        async function handleBudgetFormSubmit(e) {
+            e.preventDefault(); 
+            const form = e.target;
+            const currentMonth = state.currentMonthView;
+            if (!db || !currentMonth || !auth.currentUser) { 
+                console.error("Database or month/user not initialized!"); 
+                budgetSubmitStatus.textContent = 'Error: Cannot save, try reloading.';
+                return; 
+            }
+
+            const inputs = form.querySelectorAll('input[type="number"]');
+            const updates = { uid: auth.currentUser.uid };
+            let hasChanges = false;
+            
+            // 1. Gather all actual values from the inputs
+            inputs.forEach(input => {
+                const id = input.dataset.id;
+                // Use the current value in the input field
+                const value = parseFloat(input.value) || 0; 
+                updates[id] = value;
+                
+                // Update the local state
+                if (!state.actuals[currentMonth]) state.actuals[currentMonth] = {};
+                if (state.actuals[currentMonth][id] !== value) {
+                    state.actuals[currentMonth][id] = value;
+                    hasChanges = true;
+                }
+            });
+
+            if (!hasChanges) {
+                budgetSubmitStatus.textContent = 'No changes detected.';
+                setTimeout(() => budgetSubmitStatus.textContent = '', 3000);
+                return;
+            }
+
+            budgetSubmitStatus.textContent = 'Saving...';
+            budgetSubmitStatus.className = 'ml-4 text-yellow-400';
+            
+            try {
+                // 2. Write the entire document for the current month
+                const docRef = doc(db, dbCollectionPath, currentMonth);
+                // Use merge:true to only update the fields provided in 'updates'
+                await setDoc(docRef, updates, { merge: true });
+                
+                // 3. Re-render UI to show new calculated values/diffs
+                renderAll(); 
+
+                budgetSubmitStatus.textContent = 'Changes submitted successfully! ✅';
+                budgetSubmitStatus.className = 'ml-4 text-green-400';
+            } catch (error) {
+                console.error("Error writing to Firestore: ", error);
+                budgetSubmitStatus.textContent = 'Error saving changes! ❌';
+                budgetSubmitStatus.className = 'ml-4 text-red-400';
+            }
+            // Clear status message after a few seconds
+            setTimeout(() => {
+                budgetSubmitStatus.textContent = '';
+                budgetSubmitStatus.className = 'ml-4 text-gray-400';
+            }, 3000);
+        }
+
+
         function handleMonthChange(event) {
             state.currentMonthView = event.target.value;
             renderBudgetTable();
@@ -1033,7 +1083,10 @@
             hamburgerButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
 });
-            
+            if (budgetForm) {
+                budgetForm.addEventListener('submit', handleBudgetFormSubmit);
+            }
+            
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
