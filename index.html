@@ -201,10 +201,17 @@
         </select>
     </div>
 
-    <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg">
-        <table id="budget-table-render" class="w-full budget-table">
-        </table>
-    </div>
+    <form id="budget-actuals-form">
+        <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg mb-6">
+            <table id="budget-table-render" class="w-full budget-table">
+                </table>
+        </div>
+
+        <button type="submit" id="submit-budget-changes" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Submit
+        </button>
+        <span id="budget-submit-status" class="ml-4 text-gray-400"></span>
+    </form>
 </div>
 
             <div id="savings" class="tab-content">
@@ -1082,4 +1089,5 @@
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>
