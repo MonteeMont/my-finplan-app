@@ -688,8 +688,10 @@
                             <td>${item.name}</td>
                             <td>${f(item.amount)}</td>
                             <td>
-                                <input type="number" 
-                                       class="actual-input" 
+                                <input type="number" 
+                                       class="actual-input" 
+                                       step="0.01" 
+                                       id="actual-${month}-${item.id}"
                                        id="actual-${month}-${item.id}"
                                        name="actual-${item.id}"
                                        autocomplete="off"
@@ -930,11 +932,17 @@
             const updates = { uid: auth.currentUser.uid };
             let hasChanges = false;
             
-            // 1. Gather all actual values from the inputs
             inputs.forEach(input => {
                 const id = input.dataset.id;
-                // Use the current value in the input field
-                const value = parseFloat(input.value) || 0; 
+                
+                // --- MODIFIED LINE START ---
+                // 1. Parse value, defaulting to 0.
+                const rawValue = parseFloat(input.value) || 0;
+                // 2. Round the value to exactly two decimal places.
+                // This ensures money amounts are stored consistently.
+                const value = Math.round(rawValue * 100) / 100;
+                // --- MODIFIED LINE END ---
+
                 updates[id] = value;
                 
                 // Update the local state
